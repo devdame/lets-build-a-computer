@@ -47,27 +47,31 @@ CHIP ALU {
     PARTS:
       Mux16(a=x,b=false,sel=zx,out=xone); // zx ? x : 0
 
-      Mux16(a=notx,b=xone,sel=nx,out=xtwo); // nx ? notx : x
+      Not16(in=xone,out=notx);
+      Mux16(a=xone,b=notx,sel=nx,out=xtwo); // nx ? notx : x
 
       Mux16(a=y,b=false,sel=zy,out=yone); // zy ? y : 0
 
-      Mux16(a=noty,b=yone,sel=ny,out=ytwo); // ny ? noty : y
+      Not16(in=yone,out=noty);
+      Mux16(a=yone,b=noty,sel=ny,out=ytwo); // ny ? noty : y
 
       Add16(a=xtwo,b=ytwo,out=xplusy);
       And16(a=xtwo,b=ytwo,out=xandy);
       Mux16(a=xandy,b=xplusy,sel=f,out=computed); // f ? x+y : x&y
 
       Not16(in=computed,out=notcomputed);
-      Mux16(a=computed,b=notcomputed,sel=no,out=out,out[15]=neg,out[0..7]=firsthalf,out[8..15]=secondhalf); // no ? f(x,y) : not(f(x,y))
+      Mux16(a=computed,b=notcomputed,sel=no,out=thing,out[15]=neg); // no ? f(x,y) : not(f(x,y))
 
       // that one also saves first half, second half, and most significant bit of the output
 
-      Or8Way(in=firsthalf,out=firstor);
-      Or8Way(in=secondhalf,out=secondor);
-      Or(a=firstor,b=secondor,out=notzr);
+      // Or8Way(in=firsthalf,out=firstor);
+      // Or8Way(in=secondhalf,out=secondor);
+      Or16Way(in=thing,out=notzr);
       Not(in=notzr,out=zr); // output == 0 ? 1 : 0
 
       And(a=neg,b=neg,out=ng); // output < 0 ? 1 : 0
+
+      And16(a=thing,b=thing,out=out);
 }
 
 

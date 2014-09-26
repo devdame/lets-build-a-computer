@@ -62,10 +62,6 @@ CHIP ALU {
       Not16(in=computed,out=notcomputed);
       Mux16(a=computed,b=notcomputed,sel=no,out=thing,out[15]=neg); // no ? f(x,y) : not(f(x,y))
 
-      // that one also saves first half, second half, and most significant bit of the output
-
-      // Or8Way(in=firsthalf,out=firstor);
-      // Or8Way(in=secondhalf,out=secondor);
       Or16Way(in=thing,out=notzr);
       Not(in=notzr,out=zr); // output == 0 ? 1 : 0
 
